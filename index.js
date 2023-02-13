@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         🛠️多功能工具箱，全网VIP视频去广告，免费观看；全网会员音乐免费下载；文库复制、下载；短视频无水印下载；免费领取淘宝、天猫、京东隐藏优惠券、查询历史价格；长期更新，放心下载|更多功能持续更新中
 // @namespace    https://www.ergirl.com
-// @version      1.1.3
+// @version      1.1.4
 // @description  🔥🔥🔥全网多功能工具箱，完全免费；各大视频网站去广告，免费观看，包括优酷、爱奇艺、乐视、腾讯视频等；网易云音乐、qq音乐、酷狗、酷我等音乐网站免费在线免客户端试听下载；VIP文库免费复制下载；短视频网站包括抖音等免水印下载；一键领取【淘宝】，【天猫】，【京东】隐藏优惠券，购物比价，查看商品历史价格，助您购物省钱🔥🔥🔥
 // @author       jares chiang
 // @match        *://*.youku.com/*
@@ -729,7 +729,7 @@
 				let result = obj.tbk_privilege_get_response.result
 				if (result.data.coupon_info) {
 					let html =
-						"<div class='jar-list-coupon'><p><a target='_blank' href=https://www.ergirl.com/jump.html?url=" +
+						"<div class='jar-list-coupon'><p><a target='_blank' href=https://api.ergirl.com/jump.html?url=" +
 						result.data.shorturl +
 						'>' +
 						result.data.coupon_info +
@@ -863,7 +863,7 @@
 			let node = $('.jar-list-rec .items[data-id="' + obj.item_id + '"]')
 			if (obj.coupon_info) {
 				let html =
-					"<div class='jar-list-coupon' style='right:22px;bottom:0;'><p><a target='_blank' href=https://www.ergirl.com/jump.html?url=" +
+					"<div class='jar-list-coupon' style='right:22px;bottom:0;'><p><a target='_blank' href=https://api.ergirl.com/jump.html?url=" +
 					obj.shorturl +
 					'>' +
 					obj.coupon_info +
@@ -1103,7 +1103,7 @@
 						'<div id="jar-qrcode" style="float:right;"></div>' +
 						'<span style="color: #ff0036;text-align: center;position: absolute;right:10px;top:100px;font-weight:bold;"><p>淘宝、天猫、支付宝扫一扫</p><p>领取优惠券</p></span>' +
 						'<div class="jar-button">' +
-						'<a href="https://www.ergirl.com/jump.html?url=' +
+						'<a href="https://api.ergirl.com/jump.html?url=' +
 						shortUrl +
 						'&id=' +
 						getQueryVariable('id') +
@@ -1133,7 +1133,7 @@
 						'</div >' +
 						'<div id="jar-qrcode" style="float:right;"></div>' +
 						'<span style="color: #ff0036;text-align: center;position: absolute;right:10px;top:100px;font-weight:bold;"><p>淘宝、天猫、支付宝扫一扫</p><p>查看详情</p></span>' +
-						'<div class="jar-button"><a href="https://www.ergirl.com/jump.html?url=' +
+						'<div class="jar-button"><a href="https://api.ergirl.com/jump.html?url=' +
 						shortUrl +
 						'&id=' +
 						getQueryVariable('id') +
