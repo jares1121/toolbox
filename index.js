@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         🛠️多功能工具箱，全网VIP视频去广告，免费观看；全网会员音乐免费下载；文库复制、下载；短视频无水印下载；免费领取淘宝、天猫、京东隐藏优惠券、查询历史价格；长期更新，放心下载|更多功能持续更新中
 // @namespace    https://www.ergirl.com
-// @version      1.1.4
+// @version      1.1.5
 // @description  🔥🔥🔥全网多功能工具箱，完全免费；各大视频网站去广告，免费观看，包括优酷、爱奇艺、乐视、腾讯视频等；网易云音乐、qq音乐、酷狗、酷我等音乐网站免费在线免客户端试听下载；VIP文库免费复制下载；短视频网站包括抖音等免水印下载；一键领取【淘宝】，【天猫】，【京东】隐藏优惠券，购物比价，查看商品历史价格，助您购物省钱🔥🔥🔥
 // @author       jares chiang
 // @match        *://*.youku.com/*
@@ -44,7 +44,7 @@
 // jdList
 // @require https://greasyfork.org/scripts/441335-%E4%BA%AC%E4%B8%9C%E5%88%97%E8%A1%A8js/code/%E4%BA%AC%E4%B8%9C%E5%88%97%E8%A1%A8js.js?version=1079215
 // jdDetail
-// @require https://greasyfork.org/scripts/441336-%E4%BA%AC%E4%B8%9C%E8%AF%A6%E6%83%85js/code/%E4%BA%AC%E4%B8%9C%E8%AF%A6%E6%83%85js.js?version=1117281
+// @require https://greasyfork.org/scripts/441336-%E4%BA%AC%E4%B8%9C%E8%AF%A6%E6%83%85js/code/%E4%BA%AC%E4%B8%9C%E8%AF%A6%E6%83%85js.js?version=1153213
 // jdTopRec
 // @antifeature  referral-link 此提示为GreasyFork代码规范要求含有查券功能的脚本必须添加，实际使用无任何强制跳转，代码可查，请知悉。
 // ==/UserScript==
