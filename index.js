@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         🛠️多功能工具箱，全网VIP视频去广告，免费观看；全网会员音乐免费下载；文库复制、下载；短视频无水印下载；免费领取淘宝、天猫、京东隐藏优惠券、查询历史价格；长期更新，放心下载|更多功能持续更新中
 // @namespace    https://www.ergirl.com
-// @version      1.1.5
+// @version      1.1.6
 // @description  🔥🔥🔥全网多功能工具箱，完全免费；各大视频网站去广告，免费观看，包括优酷、爱奇艺、乐视、腾讯视频等；网易云音乐、qq音乐、酷狗、酷我等音乐网站免费在线免客户端试听下载；VIP文库免费复制下载；短视频网站包括抖音等免水印下载；一键领取【淘宝】，【天猫】，【京东】隐藏优惠券，购物比价，查看商品历史价格，助您购物省钱🔥🔥🔥
 // @author       jares chiang
 // @match        *://*.youku.com/*
@@ -702,12 +702,23 @@
 				list.each(function () {
 					let that = $(this)
 					that.css({ position: 'relative' })
-					_this.params.num_iid = $(this).find('a').attr('data-nid')
-					let url =
-						'https://api.zhetaoke.com:10001/api/open_gaoyongzhuanlian.ashx'
-					dtd(url, _this.params, (res) => {
-						_this.addEle(that, res)
-					})
+					let params = {
+						appkey: _this.params.appkey,
+						tao_id: $(this).find('a').attr('data-nid'), // 接口更换了taoid
+					}
+					dtd(
+						'https://api.zhetaoke.com:10002/api/api_detail.ashx',
+						params,
+						(res) => {
+							let tao_id = JSON.parse(res).content[0].tao_id
+							_this.params.num_iid = tao_id
+							let url =
+								'https://api.zhetaoke.com:10001/api/open_gaoyongzhuanlian.ashx'
+							dtd(url, _this.params, (res) => {
+								_this.addEle(that, res)
+							})
+						}
+					)
 				})
 			} else if (_this.params.type === 'tmall') {
 				list = $('.product')
@@ -893,24 +904,27 @@
 	initTlist()
 
 	/**
-	 * @description: 淘宝天猫列表初始化入口
+	 * @description: 淘宝天猫列表初始化入口 qingkanlin
 	 * @return {*}
 	 */
 	function initTlist() {
 		if (host.indexOf('taobao') > -1) {
 			if (host.indexOf('item.taobao') === -1) {
-				let node = $('#mainsrp-itemlist')[0] || $('#listsrp-itemlist')[0]
-				domAddEventListener(node, () => {
-					let tList = new TList({
-						appkey: config.zhetaoke.appkey,
-						sid: config.zhetaoke.sid,
-						pid: config.zhetaoke.pid,
-						num_iid: '',
-						signurl: 4,
-						type: 'taobao',
+				setTimeout(() => {
+					console.log($('#mainsrp-itemlist')[0])
+					let node = $('#mainsrp-itemlist')[0] || $('#listsrp-itemlist')[0]
+					domAddEventListener(node, () => {
+						let tList = new TList({
+							appkey: config.zhetaoke.appkey,
+							sid: config.zhetaoke.sid,
+							pid: config.zhetaoke.pid,
+							num_iid: '',
+							signurl: 4,
+							type: 'taobao',
+						})
+						tList.init()
 					})
-					tList.init()
-				})
+				}, 3000)
 				let tList = new TList({
 					appkey: config.zhetaoke.appkey,
 					sid: config.zhetaoke.sid,
