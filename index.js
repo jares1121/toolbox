@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         🛠️多功能工具箱，全网VIP视频去广告，免费观看；全网会员音乐免费下载；文库复制、下载；短视频无水印下载；免费领取淘宝、天猫、京东隐藏优惠券、查询历史价格；长期更新，放心下载|更多功能持续更新中
 // @namespace    https://www.ergirl.com
-// @version      1.1.6
+// @version      1.1.7
 // @description  🔥🔥🔥全网多功能工具箱，完全免费；各大视频网站去广告，免费观看，包括优酷、爱奇艺、乐视、腾讯视频等；网易云音乐、qq音乐、酷狗、酷我等音乐网站免费在线免客户端试听下载；VIP文库免费复制下载；短视频网站包括抖音等免水印下载；一键领取【淘宝】，【天猫】，【京东】隐藏优惠券，购物比价，查看商品历史价格，助您购物省钱🔥🔥🔥
 // @author       jares chiang
 // @match        *://*.youku.com/*
@@ -724,12 +724,23 @@
 				list = $('.product')
 				list.each(function () {
 					let that = $(this)
-					_this.params.num_iid = $(this).attr('data-id')
-					let url =
-						'https://api.zhetaoke.com:10001/api/open_gaoyongzhuanlian.ashx'
-					dtd(url, _this.params, (res) => {
-						_this.addEle(that, res)
-					})
+					let params = {
+						appkey: _this.params.appkey,
+						tao_id: $(this).attr('data-id'), // 接口更换了taoid
+					}
+					dtd(
+						'https://api.zhetaoke.com:10002/api/api_detail.ashx',
+						params,
+						(res) => {
+							let tao_id = JSON.parse(res).content[0].tao_id
+							_this.params.num_iid = tao_id
+							let url =
+								'https://api.zhetaoke.com:10001/api/open_gaoyongzhuanlian.ashx'
+							dtd(url, _this.params, (res) => {
+								_this.addEle(that, res)
+							})
+						}
+					)
 				})
 			}
 		}
@@ -904,7 +915,7 @@
 	initTlist()
 
 	/**
-	 * @description: 淘宝天猫列表初始化入口 qingkanlin
+	 * @description: 淘宝天猫列表初始化入口
 	 * @return {*}
 	 */
 	function initTlist() {
@@ -1174,19 +1185,32 @@
 		}
 	}
 	// 初始化详情
+
 	if (host.indexOf('item.taobao') > -1 || host.indexOf('detail.tmall') > -1) {
-		let detailParams = {
+		let params = {
 			appkey: '52b273a5972949388ce7b57b84453aa4',
-			sid: '45532',
-			pid: 'mm_55657354_2155900321_111019450222',
-			num_iid: getQueryVariable('id'),
-			signurl: '4',
+			tao_id: getQueryVariable('id'), // 接口更换了taoid
 		}
-		setTimeout(() => {
-			let detail = new Detail(detailParams)
-			detail.addBasic()
-			detail.getCoupon()
-		}, 1000)
+		dtd('https://api.zhetaoke.com:10002/api/api_detail.ashx', params, (res) => {
+			let tao_id = JSON.parse(res).content[0].tao_id
+			let detailParams = {
+				appkey: '52b273a5972949388ce7b57b84453aa4',
+				sid: '45532',
+				pid: 'mm_55657354_2155900321_111019450222',
+				num_iid: tao_id,
+				signurl: '4',
+			}
+			setTimeout(() => {
+				let detail = new Detail(detailParams)
+				detail.addBasic()
+				detail.getCoupon()
+			}, 1000)
+			// _this.params.num_iid = tao_id
+			// let url = 'https://api.zhetaoke.com:10001/api/open_gaoyongzhuanlian.ashx'
+			// dtd(url, _this.params, (res) => {
+			// 	_this.addEle(that, res)
+			// })
+		})
 	}
 	/**
 	 * @description: 相似比价
