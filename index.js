@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         🛠️多功能工具箱，全网VIP视频去广告，免费观看；全网会员音乐免费下载；文库复制、下载；短视频无水印下载；免费领取淘宝、天猫、京东隐藏优惠券、查询历史价格；长期更新，放心下载|更多功能持续更新中
 // @namespace    https://www.ergirl.com
-// @version      1.1.9
+// @version      1.1.10
 // @description  🔥🔥🔥全网多功能工具箱，完全免费；各大视频网站去广告，免费观看，包括优酷、爱奇艺、乐视、腾讯视频等；网易云音乐、qq音乐、酷狗、酷我等音乐网站免费在线免客户端试听下载；VIP文库免费复制下载；短视频网站包括抖音等免水印下载；一键领取【淘宝】，【天猫】，【京东】隐藏优惠券，购物比价，查看商品历史价格，助您购物省钱🔥🔥🔥
 // @author       jares chiang
 // @match        *://*.youku.com/*
@@ -457,7 +457,6 @@
 					let id = getDyId()
 					getDyUrl(id)
 				})
-				console.log(document.querySelector('.xg-right-grid'))
 				document.querySelector('.xg-right-grid').appendChild(div)
 			} else {
 				dyAddBtn()
@@ -491,7 +490,7 @@
 		})
 		node.querySelector('.xg-right-grid').appendChild(div)
 	}
-	// 获取ID
+	// 获取抖音ID
 	function getDyId() {
 		var href = window.location.href
 		var index = href.lastIndexOf('/')
@@ -922,7 +921,6 @@
 		if (host.indexOf('taobao') > -1) {
 			if (host.indexOf('item.taobao') === -1) {
 				setTimeout(() => {
-					console.log($('#mainsrp-itemlist')[0])
 					let node = $('#mainsrp-itemlist')[0] || $('#listsrp-itemlist')[0]
 					domAddEventListener(node, () => {
 						let tList = new TList({
@@ -1020,6 +1018,47 @@
 	 */
 	// --------------------列表功能结束--------------------
 	// --------------------详情功能开始--------------------
+    // 获取新ID
+	class GetNewId {
+		constructor(options) {
+			this.id = ''
+		}
+		async getNewId() {
+			let paramsDetail = {
+				appkey: '52b273a5972949388ce7b57b84453aa4',
+				tao_id: getQueryVariable('id'), // 接口更换了taoid
+			}
+			// 获取详情 拿coupon_id 判断
+			const urlDetail = new URL(
+				'https://api.zhetaoke.com:10002/api/api_detail.ashx'
+			)
+			urlDetail.search = new URLSearchParams(paramsDetail).toString()
+			let resDetail = await fetch(urlDetail)
+			const resDetailContent = await resDetail.json()
+			let objDetail = resDetailContent.content[0]
+
+			let paramsList = {
+				appkey: '52b273a5972949388ce7b57b84453aa4',
+				page_size: 120,
+				sort: 'new',
+				tj: objDetail.user_type,
+				yunfeixian: objDetail.yunfeixian,
+				pinpai: objDetail.pinpai,
+				q: objDetail.shop_title + objDetail.tao_title,
+			}
+			const urlList = new URL('https://api.zhetaoke.com:10001/api/api_all.ashx')
+			urlList.search = new URLSearchParams(paramsList).toString()
+			let resList = await fetch(urlList)
+			const resListContent = await resList.json()
+			let newArr = resListContent.content.filter((item) => {
+				return item.coupon_id === objDetail.coupon_id
+			})
+			if (newArr.length > 0) {
+				this.id = newArr[0].tao_id
+			}
+			return this.id
+		}
+	}
 	class Detail {
 		constructor(options) {
 			this.couParams = {
@@ -1191,51 +1230,20 @@
 			appkey: '52b273a5972949388ce7b57b84453aa4',
 			tao_id: getQueryVariable('id'), // 接口更换了taoid
 		}
-		// let params = {
-		// 	appkey: '5cfe247e623ce',
-		// 	version: 'v1.2.3',
-		// 	id: getQueryVariable('id'), // 接口更换了taoid
-		// 	goodsId: getQueryVariable('id'), // 接口更换了taoid
-		// }
-		dtd('https://api.zhetaoke.com:10002/api/api_detail.ashx', params, (res) => {
-			// let tao_id = res.data.goodsId
-			let obj = JSON.parse(res).content[0]
-			if (obj.coupon_id) {
-			}
-			let params = {
+		let newId = new GetNewId()
+		newId.getNewId().then((id) => {
+			let detailParams = {
 				appkey: '52b273a5972949388ce7b57b84453aa4',
-				page_size: 120,
-				sort: 'new',
-				tj: obj.user_type,
-				yunfeixian: obj.yunfeixian,
-				pinpai: obj.pinpai,
-				q: obj.shop_title + obj.tao_title,
+				sid: '45532',
+				pid: 'mm_55657354_2155900321_111019450222',
+				num_iid: id,
+				signurl: '4',
 			}
-			dtd('https://api.zhetaoke.com:10001/api/api_all.ashx', params, (res) => {
-				let arr = JSON.parse(res).content
-				let newArr = arr.filter((item) => {
-					return item.coupon_id === obj.coupon_id
-				})
-				if (newArr.length > 0) {
-					let detailParams = {
-						appkey: '52b273a5972949388ce7b57b84453aa4',
-						sid: '45532',
-						pid: 'mm_55657354_2155900321_111019450222',
-						num_iid: newArr[0].tao_id,
-						signurl: '4',
-					}
-					setTimeout(() => {
-						let detail = new Detail(detailParams)
-						detail.addBasic()
-						detail.getCoupon()
-					}, 1000)
-					// _this.params.num_iid = tao_id
-					// let url = 'https://api.zhetaoke.com:10001/api/open_gaoyongzhuanlian.ashx'
-					// dtd(url, _this.params, (res) => {
-					// 	_this.addEle(that, res)
-					// })
-				}
-			})
+			setTimeout(() => {
+				let detail = new Detail(detailParams)
+				detail.addBasic()
+				detail.getCoupon()
+			}, 1000)
 		})
 	}
 	/**
@@ -1312,8 +1320,7 @@
 			this.hisParams = {
 				appKey: '5cfe247e623ce',
 				version: 'v1.0.0',
-				id: '38100089',
-				goodsId: getQueryVariable('id'),
+				goodsId: options.id,
 			}
 			this.hisParams.sign = makeSign(this.hisParams)
 		}
@@ -1323,7 +1330,9 @@
 			let url = 'https://openapi.dataoke.com/api/goods/price-trend'
 			let params = this.hisParams
 			dtd(url, params, (res) => {
-				that.addHistory(res)
+				setTimeout(() => {
+					that.addHistory(res)
+				}, 1000)
 			})
 		}
 		// 插入历史数据
@@ -1392,10 +1401,13 @@
 		}
 	}
 	// 历史记录
-	let his = new History()
-	if (host.indexOf('item.taobao') > -1 || host.indexOf('detail.tmall') > -1) {
-		his.getHistory()
-	}
+	let newId = new GetNewId()
+	newId.getNewId().then((id) => {
+		let his = new History({ id: id })
+		if (host.indexOf('item.taobao') > -1 || host.indexOf('detail.tmall') > -1) {
+			his.getHistory()
+		}
+	})
 	// 监听滚动
 	function scrollListener(handle) {
 		//判断鼠标滚轮滚动方向
